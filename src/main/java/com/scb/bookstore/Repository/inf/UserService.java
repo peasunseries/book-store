@@ -9,7 +9,8 @@ import java.util.List;
 public interface UserService {
 
     User findByUserName(String username);
-    public User save(User user);
+    User save(User user);
+    void deleteById(int id);
     User findById(int id);
 
 }

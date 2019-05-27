@@ -61,6 +61,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	}
 
 	@Override
+	public void deleteById(int id) {
+		userRepository.deleteById(id);
+	}
+
+	@Override
 	public User save(User user) {
 		User newUser = new User();
 		newUser.setUsername(user.getUsername());

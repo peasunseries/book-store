@@ -1,5 +1,6 @@
 package com.scb.bookstore.controller;
 
+import com.scb.bookstore.Repository.impl.OrderServiceImpl;
 import com.scb.bookstore.Repository.impl.UserServiceImpl;
 import com.scb.bookstore.configuration.JwtConfiguration;
 import com.scb.bookstore.exception.AuthenticationException;
@@ -17,14 +18,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,6 +36,7 @@ public class UserController {
     private JwtTokenService jwtTokenService;
     private JwtConfiguration jwtConfiguration;
     private UserServiceImpl userService;
+    private OrderServiceImpl orderService;
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
@@ -58,6 +58,12 @@ public class UserController {
     public void setUserService(UserServiceImpl userService) {
         this.userService = userService;
     }
+
+    @Autowired
+    public void setOrderService(OrderServiceImpl orderService) {
+        this.orderService = orderService;
+    }
+
 
 
     @ApiOperation(value = "Welcome API.", response = String.class)
@@ -140,6 +146,35 @@ public class UserController {
             log.error(ex.getMessage());
             throw new DatabaseException("Invalid data [missing required data, duplicated data]", ex.getMessage());
         } catch (Exception ex) {
+            log.error(ex.getMessage());
+            throw new UnexpectedException(ex.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "Delete user and orders history.", response = LoginResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful"),
+            @ApiResponse(code = 401, message = "Authentication failed."),
+            @ApiResponse(code = 500, message = "Unexpected exception.")
+    })
+    @DeleteMapping(value = "/users")
+    public void deleteOrderDetail(HttpServletRequest req){
+        try {
+            final String header = req.getHeader(jwtConfiguration.getHeader());
+            final String token = header.replace(jwtConfiguration.getPrefix(), "");
+            final String userName = jwtTokenService.getUsernameFromToken(token);
+            final User user = userService.findByUserName(userName);
+            if (user == null) {
+                log.error("User {} not found", userName);
+                throw new DataNotFoundException("User " + userName + " not found.", null);
+            }
+            orderService.deleteByUserId(user.getId());
+            userService.deleteById(user.getId());
+        } catch (ExpiredJwtException ex) {
+            log.error(ex.getMessage());
+            throw new AuthenticationException("Token expired.",
+                    ex.getMessage());
+        }  catch (Exception ex) {
             log.error(ex.getMessage());
             throw new UnexpectedException(ex.getMessage());
         }

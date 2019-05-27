@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -78,11 +79,10 @@ public class UserControllerTest {
         LoginResponse loginResponse = objectMapper.readValue(content, LoginResponse.class);
 
         String header = "SCB " + loginResponse.getToken();
-        result = mockMvc.perform(get("/users")
+        mockMvc.perform(get("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("authorization", header))
-                .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class UserControllerTest {
 
         Assert.assertTrue(result.getResponse().getContentAsString().equalsIgnoreCase("{\"username\":\"test\",\"first_name\":\"test\",\"last_name\":\"test\",\"date_of_birth\":\"10/01/1977\",\"books\":[]}"));
 
-        result = mockMvc.perform(post("/users")
+        mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\n" +
                         "\t\"password\":\"test\",\n" +
@@ -125,8 +125,36 @@ public class UserControllerTest {
                         "\t\"date_of_birth\" : \"10/01/1977\"\n" +
                         "}")
                 .header("authorization", header))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void step5_deleteUserTest() throws Exception {
+        authenticationRequest.setUsername("chiwa");
+        authenticationRequest.setPassword("password");
+
+        MvcResult result = mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authenticationRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("token")))
                 .andReturn();
+        String content = result.getResponse().getContentAsString();
+
+        LoginResponse loginResponse = objectMapper.readValue(content, LoginResponse.class);
+
+        String header = "SCB " + loginResponse.getToken();
+        mockMvc.perform(delete("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("authorization", header))
+                .andExpect(status().isOk());
+
+
+        mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authenticationRequest)))
+                .andExpect(content().string(containsString("User chiwa not found.")))
+                .andExpect(status().isUnauthorized());
     }
 
 }
