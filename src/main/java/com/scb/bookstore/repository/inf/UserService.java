@@ -1,10 +1,8 @@
-package com.scb.bookstore.Repository.inf;
+package com.scb.bookstore.repository.inf;
 
 
 
 import com.scb.bookstore.model.user.User;
-
-import java.util.List;
 
 public interface UserService {
 

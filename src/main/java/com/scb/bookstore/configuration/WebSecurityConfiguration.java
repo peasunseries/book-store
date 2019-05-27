@@ -46,7 +46,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers("/welcome", "/h2/**", "/swagger*/**", "/webjars/**", "/v2/*",  "/login").permitAll()
+                .antMatchers("/welcome", "/h2/**", "/swagger*/**", "/webjars/**", "/v2/*",  "/login", "/books").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(bookStoreAuthenticationEntryPoint).and()

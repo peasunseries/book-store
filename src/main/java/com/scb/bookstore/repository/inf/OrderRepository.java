@@ -1,4 +1,4 @@
-package com.scb.bookstore.Repository.inf;
+package com.scb.bookstore.repository.inf;
 
 
 import com.scb.bookstore.model.order.Order;

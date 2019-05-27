@@ -1,8 +1,8 @@
-package com.scb.bookstore.Repository.impl;
+package com.scb.bookstore.repository.impl;
 
 
-import com.scb.bookstore.Repository.inf.OrderRepository;
-import com.scb.bookstore.Repository.inf.OrderService;
+import com.scb.bookstore.repository.inf.OrderRepository;
+import com.scb.bookstore.repository.inf.OrderService;
 import com.scb.bookstore.model.order.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

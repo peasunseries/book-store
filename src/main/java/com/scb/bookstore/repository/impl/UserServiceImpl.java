@@ -1,10 +1,9 @@
-package com.scb.bookstore.Repository.impl;
+package com.scb.bookstore.repository.impl;
 
 
-import com.scb.bookstore.Repository.inf.UserRepository;
-import com.scb.bookstore.Repository.inf.UserService;
+import com.scb.bookstore.repository.inf.UserRepository;
+import com.scb.bookstore.repository.inf.UserService;
 import com.scb.bookstore.model.user.User;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

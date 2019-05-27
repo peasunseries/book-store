@@ -1,7 +1,7 @@
 package com.scb.bookstore.controller;
 
-import com.scb.bookstore.Repository.impl.OrderServiceImpl;
-import com.scb.bookstore.Repository.impl.UserServiceImpl;
+import com.scb.bookstore.repository.impl.OrderServiceImpl;
+import com.scb.bookstore.repository.impl.UserServiceImpl;
 import com.scb.bookstore.configuration.JwtConfiguration;
 import com.scb.bookstore.exception.AuthenticationException;
 import com.scb.bookstore.exception.DataNotFoundException;
@@ -18,7 +18,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

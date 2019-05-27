@@ -31,6 +31,7 @@ public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
     private ObjectMapper objectMapper = new ObjectMapper();
     private AuthenticationRequest authenticationRequest  = new AuthenticationRequest();
 
