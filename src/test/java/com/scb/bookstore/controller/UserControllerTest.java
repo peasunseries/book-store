@@ -3,6 +3,7 @@ package com.scb.bookstore.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scb.bookstore.model.authentication.AuthenticationRequest;
 import com.scb.bookstore.model.response.LoginResponse;
+import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +63,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void step2_getLoggedUserInformationTest() throws Exception {
+    public void step3_getLoggedUserInformationTest() throws Exception {
         authenticationRequest.setUsername("chiwa");
         authenticationRequest.setPassword("password");
 
@@ -81,6 +82,50 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("authorization", header))
                 .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void step4_registerUserTest() throws Exception {
+        authenticationRequest.setUsername("chiwa");
+        authenticationRequest.setPassword("password");
+
+        MvcResult result = mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authenticationRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("token")))
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+
+        LoginResponse loginResponse = objectMapper.readValue(content, LoginResponse.class);
+
+        String header = "SCB " + loginResponse.getToken();
+        result = mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "\t\"username\":\"test\",\n" +
+                        "\t\"password\":\"test\",\n" +
+                        "\t\"first_name\" : \"test\",\n" +
+                        "\t\"last_name\" : \"test\",\n" +
+                        "\t\"date_of_birth\" : \"10/01/1977\"\n" +
+                        "}")
+                .header("authorization", header))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Assert.assertTrue(result.getResponse().getContentAsString().equalsIgnoreCase("{\"username\":\"test\",\"first_name\":\"test\",\"last_name\":\"test\",\"date_of_birth\":\"10/01/1977\",\"books\":[]}"));
+
+        result = mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "\t\"password\":\"test\",\n" +
+                        "\t\"first_name\" : \"test\",\n" +
+                        "\t\"last_name\" : \"test\",\n" +
+                        "\t\"date_of_birth\" : \"10/01/1977\"\n" +
+                        "}")
+                .header("authorization", header))
+                .andExpect(status().isBadRequest())
                 .andReturn();
     }
 

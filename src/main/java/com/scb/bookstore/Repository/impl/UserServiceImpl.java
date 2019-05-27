@@ -60,4 +60,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		return optionalUser.isPresent() ? optionalUser.get() : null;
 	}
 
+	@Override
+	public User save(User user) {
+		User newUser = new User();
+		newUser.setUsername(user.getUsername());
+		newUser.setFirstName(user.getFirstName());
+		newUser.setLastName(user.getLastName());
+		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+		newUser.setDateOfBirth(user.getDateOfBirth());
+		return userRepository.save(newUser);
+	}
 }

@@ -4,6 +4,8 @@ import com.scb.bookstore.Repository.impl.UserServiceImpl;
 import com.scb.bookstore.configuration.JwtConfiguration;
 import com.scb.bookstore.exception.AuthenticationException;
 import com.scb.bookstore.exception.DataNotFoundException;
+import com.scb.bookstore.exception.DatabaseException;
+import com.scb.bookstore.exception.UnexpectedException;
 import com.scb.bookstore.model.authentication.AuthenticationRequest;
 import com.scb.bookstore.model.response.LoginResponse;
 import com.scb.bookstore.model.user.User;
@@ -15,6 +17,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -66,7 +69,7 @@ public class UserController {
         return "Welcome user!";
     }
 
-    @ApiOperation(value = "Login and get useriInformations.", response = LoginResponse.class)
+    @ApiOperation(value = "Login and get user informations and token.", response = LoginResponse.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Login Successful"),
             @ApiResponse(code = 401, message = "Authentication failed."),
@@ -115,6 +118,30 @@ public class UserController {
             log.error(ex.getMessage());
             throw new AuthenticationException("Token expired.",
                     ex.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "Register new user.", response = LoginResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful"),
+            @ApiResponse(code = 400, message = "Bad request,  Invalid data [missing required data, duplicated data]."),
+            @ApiResponse(code = 401, message = "Authentication failed."),
+            @ApiResponse(code = 500, message = "Unexpected exception.")
+    })
+    @PostMapping("/users")
+    public User registerUser(@RequestBody User newUser){
+        try {
+            return  userService.save(newUser);
+        }catch (ExpiredJwtException ex) {
+            log.error(ex.getMessage());
+            throw new AuthenticationException("Token expired.",
+                    ex.getMessage());
+        } catch (DataIntegrityViolationException ex) {
+            log.error(ex.getMessage());
+            throw new DatabaseException("Invalid data [missing required data, duplicated data]", ex.getMessage());
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            throw new UnexpectedException(ex.getMessage());
         }
     }
 
