@@ -2,6 +2,7 @@ package com.scb.bookstore.controller;
 
 
 import com.scb.bookstore.exception.AuthenticationException;
+import com.scb.bookstore.exception.DataNotFoundException;
 import com.scb.bookstore.model.response.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,5 +25,10 @@ public class ExceptionAdviceController {
         return new ApiErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), null);
     }
 
+    @ExceptionHandler(DataNotFoundException.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ApiErrorResponse handleDataNotFoundException(DataNotFoundException ex) {
+        return new ApiErrorResponse(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+    }
 
 }

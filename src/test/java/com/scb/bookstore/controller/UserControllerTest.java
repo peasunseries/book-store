@@ -2,6 +2,7 @@ package com.scb.bookstore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scb.bookstore.model.authentication.AuthenticationRequest;
+import com.scb.bookstore.model.response.LoginResponse;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -57,6 +59,29 @@ public class UserControllerTest {
                 .content(objectMapper.writeValueAsString(authenticationRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("token")));
+    }
+
+    @Test
+    public void step2_getLoggedUserInformationTest() throws Exception {
+        authenticationRequest.setUsername("chiwa");
+        authenticationRequest.setPassword("password");
+
+        MvcResult result = mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authenticationRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("token")))
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+
+        LoginResponse loginResponse = objectMapper.readValue(content, LoginResponse.class);
+
+        String header = "SCB " + loginResponse.getToken();
+        result = mockMvc.perform(get("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("authorization", header))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 
 }
