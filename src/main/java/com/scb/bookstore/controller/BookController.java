@@ -1,11 +1,18 @@
 package com.scb.bookstore.controller;
 
+import com.scb.bookstore.configuration.JwtConfiguration;
 import com.scb.bookstore.exception.AuthenticationException;
+import com.scb.bookstore.exception.DataNotFoundException;
 import com.scb.bookstore.exception.ExternalRequestException;
 import com.scb.bookstore.exception.UnexpectedException;
 import com.scb.bookstore.model.book.Book;
 import com.scb.bookstore.model.response.LoginResponse;
+import com.scb.bookstore.model.response.OrderResponse;
+import com.scb.bookstore.model.user.User;
 import com.scb.bookstore.repository.ScbExternalBookRepository;
+import com.scb.bookstore.repository.impl.OrderServiceImpl;
+import com.scb.bookstore.repository.impl.UserServiceImpl;
+import com.scb.bookstore.security.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,7 +20,10 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +35,24 @@ import java.util.List;
 public class BookController {
 
     private ScbExternalBookRepository scbExternalBookRepository;
+    private JwtTokenService jwtTokenService;
+    private UserServiceImpl userService;
+    private OrderServiceImpl orderService;
+
+    @Autowired
+    public void setJwtTokenService(JwtTokenService jwtTokenService) {
+        this.jwtTokenService = jwtTokenService;
+    }
+
+    @Autowired
+    public void setUserService(UserServiceImpl userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setOrderService(OrderServiceImpl orderService) {
+        this.orderService = orderService;
+    }
 
     @Autowired
     public void setScbExternalBookRepository(ScbExternalBookRepository scbExternalBookRepository) {
@@ -51,6 +79,24 @@ public class BookController {
             log.error(ex.getMessage());
             throw new UnexpectedException(ex.getMessage());
         }
+    }
+
+    @ApiOperation(value = "Order books.", response = OrderResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful"),
+            @ApiResponse(code = 401, message = "Authentication failed."),
+            @ApiResponse(code = 500, message = "Unexpected exception.")
+    })
+    @PostMapping("/users/orders")
+    public User orderBooks(HttpServletRequest req, @RequestBody OrderResponse orderBooks){
+        final User user = jwtTokenService.getUserInformation(req);
+        if (user == null) {
+            log.error("User not found");
+            throw new DataNotFoundException("User not found.", null);
+        }
+        OrderResponse orderResponse = new OrderResponse();
+        orderResponse.setPrice(750.0);
+        return user;
     }
 
 }

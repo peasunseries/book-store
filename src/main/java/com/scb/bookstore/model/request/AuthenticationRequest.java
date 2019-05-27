@@ -1,4 +1,4 @@
-package com.scb.bookstore.model.authentication;
+package com.scb.bookstore.model.request;
 
 public class AuthenticationRequest {
 

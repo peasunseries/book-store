@@ -1,6 +1,8 @@
 package com.scb.bookstore.security;
 
 import com.scb.bookstore.configuration.JwtConfiguration;
+import com.scb.bookstore.model.user.User;
+import com.scb.bookstore.repository.impl.UserServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.function.Function;
@@ -16,10 +19,16 @@ import java.util.function.Function;
 public class JwtTokenService implements Serializable {
 
     private JwtConfiguration jwtConfiguration;
+    private UserServiceImpl userService;
 
     @Autowired
     public void setJwtConfiguration(JwtConfiguration jwtConfiguration) {
         this.jwtConfiguration = jwtConfiguration;
+    }
+
+    @Autowired
+    public void setUserService(UserServiceImpl userService) {
+        this.userService = userService;
     }
 
     public String getUsernameFromToken(String token) {
@@ -70,6 +79,13 @@ public class JwtTokenService implements Serializable {
         return (
               username.equals(userDetails.getUsername())
                     && !isTokenExpired(token));
+    }
+
+    public User getUserInformation(HttpServletRequest req) {
+        final String header = req.getHeader(jwtConfiguration.getHeader());
+        final String token = header.replace(jwtConfiguration.getPrefix(), "");
+        final String userName = getUsernameFromToken(token);
+        return userService.findByUserName(userName);
     }
 
 }

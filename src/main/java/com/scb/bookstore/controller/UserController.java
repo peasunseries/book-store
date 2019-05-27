@@ -7,7 +7,7 @@ import com.scb.bookstore.exception.AuthenticationException;
 import com.scb.bookstore.exception.DataNotFoundException;
 import com.scb.bookstore.exception.DatabaseException;
 import com.scb.bookstore.exception.UnexpectedException;
-import com.scb.bookstore.model.authentication.AuthenticationRequest;
+import com.scb.bookstore.model.request.AuthenticationRequest;
 import com.scb.bookstore.model.response.LoginResponse;
 import com.scb.bookstore.model.user.User;
 import com.scb.bookstore.security.JwtTokenService;
@@ -33,7 +33,6 @@ public class UserController {
 
     private AuthenticationManager authenticationManager;
     private JwtTokenService jwtTokenService;
-    private JwtConfiguration jwtConfiguration;
     private UserServiceImpl userService;
     private OrderServiceImpl orderService;
 
@@ -46,12 +45,6 @@ public class UserController {
     public void setJwtTokenService(JwtTokenService jwtTokenService) {
         this.jwtTokenService = jwtTokenService;
     }
-
-    @Autowired
-    public void setJwtConfiguration(JwtConfiguration jwtConfiguration) {
-        this.jwtConfiguration = jwtConfiguration;
-    }
-
 
     @Autowired
     public void setUserService(UserServiceImpl userService) {
@@ -110,13 +103,10 @@ public class UserController {
     @GetMapping(value = "/users")
     public User getLoggedUserData(HttpServletRequest req){
         try {
-            final String header = req.getHeader(jwtConfiguration.getHeader());
-            final String token = header.replace(jwtConfiguration.getPrefix(), "");
-            final String userName = jwtTokenService.getUsernameFromToken(token);
-            final User user = userService.findByUserName(userName);
+            final User user = jwtTokenService.getUserInformation(req);
             if (user == null) {
-                log.error("User {} not found", userName);
-                throw new DataNotFoundException("User " + userName + " not found.", null);
+                log.error("User not found");
+                throw new DataNotFoundException("User not found.", null);
             }
             return user;
         } catch (ExpiredJwtException ex) {
@@ -157,15 +147,12 @@ public class UserController {
             @ApiResponse(code = 500, message = "Unexpected exception.")
     })
     @DeleteMapping(value = "/users")
-    public void deleteOrderDetail(HttpServletRequest req){
+    public void deleteUserOrderDetail(HttpServletRequest req){
         try {
-            final String header = req.getHeader(jwtConfiguration.getHeader());
-            final String token = header.replace(jwtConfiguration.getPrefix(), "");
-            final String userName = jwtTokenService.getUsernameFromToken(token);
-            final User user = userService.findByUserName(userName);
+            final User user = jwtTokenService.getUserInformation(req);
             if (user == null) {
-                log.error("User {} not found", userName);
-                throw new DataNotFoundException("User " + userName + " not found.", null);
+                log.error("User not found");
+                throw new DataNotFoundException("User not found.", null);
             }
             orderService.deleteByUserId(user.getId());
             userService.deleteById(user.getId());

@@ -1,7 +1,7 @@
 package com.scb.bookstore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.scb.bookstore.model.authentication.AuthenticationRequest;
+import com.scb.bookstore.model.request.AuthenticationRequest;
 import com.scb.bookstore.model.response.LoginResponse;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
