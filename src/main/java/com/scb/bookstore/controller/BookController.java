@@ -4,9 +4,13 @@ import com.scb.bookstore.exception.AuthenticationException;
 import com.scb.bookstore.exception.ExternalRequestException;
 import com.scb.bookstore.exception.UnexpectedException;
 import com.scb.bookstore.model.book.Book;
+import com.scb.bookstore.model.response.LoginResponse;
 import com.scb.bookstore.repository.ScbExternalBookRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +31,12 @@ public class BookController {
         this.scbExternalBookRepository = scbExternalBookRepository;
     }
 
+    @ApiOperation(value = "Get all books.", response = Book.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "List of Books"),
+            @ApiResponse(code = 401, message = "Authentication failed."),
+            @ApiResponse(code = 500, message = "Unexpected exception.")
+    })
     @GetMapping(value = "/books")
     public List<Book> findAllBooks(HttpServletRequest req){
         try {
