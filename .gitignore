@@ -1,0 +1,17 @@
+.idea
+*/*.iml
+*/target/
+*/stdout.log
+*.iml
+target
+stdout.log
+menudata
+.devserver
+*/dependency-reduced-pom.xml
+target/
+.settings/*
+*/.settings/*
+.DS_Store
+.build.xml
+*.log
+/nbactions.xml
