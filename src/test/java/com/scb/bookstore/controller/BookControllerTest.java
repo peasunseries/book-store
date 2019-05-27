@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -48,11 +50,12 @@ public class BookControllerTest {
     @Test
     public void findAllBooks() throws Exception {
         List<Book> bookList = new ArrayList<>();
-        Book book = new Book(1, "JAVA", "CHIWA", 750.0);
+        Book book = new Book(1, "JAVA", "Chiwa Kantawong", 750.0);
         bookList.add(book);
         Mockito.when(scbExternalBookRepository.findAllBooking()).thenReturn(bookList);
         mockMvc.perform(get("/books")
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(containsString("Chiwa Kantawong")))
                 .andExpect(status().isOk());
     }
 
