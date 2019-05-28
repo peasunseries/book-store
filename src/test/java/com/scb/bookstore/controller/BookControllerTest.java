@@ -2,7 +2,11 @@ package com.scb.bookstore.controller;
 
 import com.scb.bookstore.exception.ExternalRequestException;
 import com.scb.bookstore.model.book.Book;
+import com.scb.bookstore.model.user.User;
 import com.scb.bookstore.repository.ScbExternalBookRepository;
+import com.scb.bookstore.repository.impl.UserOrderServiceImpl;
+import com.scb.bookstore.repository.impl.UserServiceImpl;
+import com.scb.bookstore.security.JwtTokenService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +28,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,14 +42,24 @@ public class BookControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private UserServiceImpl userService;
+
     @Mock
     private ScbExternalBookRepository scbExternalBookRepository;
+
+    @Mock
+    private JwtTokenService jwtTokenService;
+
+    @Autowired
+    private UserOrderServiceImpl userOrderService;
 
     @InjectMocks
     private BookController bookController;
 
     @Before
     public void setScbExternalBookRepository() throws Exception {
+        bookController.setUserOrderService(userOrderService);
         this.mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
     }
 
@@ -67,5 +83,21 @@ public class BookControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
     }
 
-
+    @Test
+    public void userOrder() throws Exception {
+        List<Book> bookList = new ArrayList<>();
+        Book book = new Book(5, "JAVA", "Chiwa Kantawong", 750.0);
+        bookList.add(book);
+        book = new Book(6, "PHP", "Nirucha Kantawong", 550.0);
+        bookList.add(book);
+        Mockito.when(scbExternalBookRepository.findAllBooking()).thenReturn(bookList);
+        User user = userService.findById(1);
+        user.setOrders(new ArrayList<>());
+        Mockito.when(jwtTokenService.getUserInformation(any())).thenReturn(user);
+        mockMvc.perform(post("/users/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"orders\": [6, 5] }"))
+                .andExpect(content().string(containsString("{\"price\":1078.7}")))
+                .andExpect(status().isOk());
+    }
 }
