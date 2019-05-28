@@ -40,9 +40,8 @@ public class UserOrderServiceImpl implements UserOrder {
     }
 
     @Transactional
-    public OrderResponse createNewOrderByUser(User user, OrderRequest orderRequest) {
+    public OrderResponse createNewOrderByUser(List<Book> bookList, User user, OrderRequest orderRequest) {
         OrderResponse orderResponse = new OrderResponse();
-        final List<Book> bookList = scbExternalBookRepository.findAllBooking();
         List<Order> orders = new ArrayList<>();
         String orderId = UUID.randomUUID().toString();
         for (int bookId : orderRequest.getOrders()) {

@@ -110,7 +110,8 @@ public class BookController {
             if (orderRequest.getOrders().isEmpty()) {
                 return new OrderResponse();
             } else {
-                return userOrderService.createNewOrderByUser(user, orderRequest);
+                final List<Book> bookList = scbExternalBookRepository.findAllBooking();
+                return userOrderService.createNewOrderByUser(bookList, user, orderRequest);
             }
         } catch (ExpiredJwtException ex) {
             log.error(ex.getMessage());

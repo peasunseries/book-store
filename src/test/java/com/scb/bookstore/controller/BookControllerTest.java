@@ -92,11 +92,30 @@ public class BookControllerTest {
         bookList.add(book);
         Mockito.when(scbExternalBookRepository.findAllBooking()).thenReturn(bookList);
         User user = userService.findById(1);
+        //user.setOrders(new ArrayList<>());
+        Mockito.when(jwtTokenService.getUserInformation(any())).thenReturn(user);
+        mockMvc.perform(post("/users/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"orders\": [5, 6] }"))
+                .andExpect(content().string(containsString("{\"price\":1300.0}")))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test(expected = NestedServletException.class)
+    public void userOrderFail() throws Exception {
+        List<Book> bookList = new ArrayList<>();
+        Book book = new Book(5, "JAVA", "Chiwa Kantawong", 750.0);
+        bookList.add(book);
+        book = new Book(6, "PHP", "Nirucha Kantawong", 550.0);
+        bookList.add(book);
+        Mockito.when(scbExternalBookRepository.findAllBooking()).thenReturn(bookList);
+        User user = userService.findById(1);
         user.setOrders(new ArrayList<>());
         Mockito.when(jwtTokenService.getUserInformation(any())).thenReturn(user);
         mockMvc.perform(post("/users/orders")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"orders\": [6, 5] }"))
+                .content("{ \"orders\": [1, 2] }"))
                 .andExpect(content().string(containsString("{\"price\":1078.7}")))
                 .andExpect(status().isOk());
     }
