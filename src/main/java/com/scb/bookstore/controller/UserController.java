@@ -1,8 +1,5 @@
 package com.scb.bookstore.controller;
 
-import com.scb.bookstore.repository.impl.OrderServiceImpl;
-import com.scb.bookstore.repository.impl.UserServiceImpl;
-import com.scb.bookstore.configuration.JwtConfiguration;
 import com.scb.bookstore.exception.AuthenticationException;
 import com.scb.bookstore.exception.DataNotFoundException;
 import com.scb.bookstore.exception.DatabaseException;
@@ -10,6 +7,8 @@ import com.scb.bookstore.exception.UnexpectedException;
 import com.scb.bookstore.model.request.AuthenticationRequest;
 import com.scb.bookstore.model.response.LoginResponse;
 import com.scb.bookstore.model.user.User;
+import com.scb.bookstore.repository.impl.UserOrderServiceImpl;
+import com.scb.bookstore.repository.impl.UserServiceImpl;
 import com.scb.bookstore.security.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.annotations.Api;
@@ -34,7 +33,7 @@ public class UserController {
     private AuthenticationManager authenticationManager;
     private JwtTokenService jwtTokenService;
     private UserServiceImpl userService;
-    private OrderServiceImpl orderService;
+    private UserOrderServiceImpl userOrderService;
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
@@ -51,12 +50,11 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @Autowired
-    public void setOrderService(OrderServiceImpl orderService) {
-        this.orderService = orderService;
+    public void setUserOrderService(UserOrderServiceImpl userOrderService) {
+        this.userOrderService = userOrderService;
     }
-
-
 
     @ApiOperation(value = "Welcome API.", response = String.class)
     @ApiResponses(value = {
@@ -154,8 +152,7 @@ public class UserController {
                 log.error("User not found");
                 throw new DataNotFoundException("User not found.", null);
             }
-            orderService.deleteByUserId(user.getId());
-            userService.deleteById(user.getId());
+            userOrderService.deleteUserAndOrder(user);
         } catch (ExpiredJwtException ex) {
             log.error(ex.getMessage());
             throw new AuthenticationException("Token expired.",

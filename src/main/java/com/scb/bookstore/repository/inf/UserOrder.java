@@ -6,4 +6,5 @@ import com.scb.bookstore.model.user.User;
 
 public interface UserOrder {
      OrderResponse createNewOrderByUser(User user, OrderRequest orderRequest);
+     void deleteUserAndOrder(User user);
 }

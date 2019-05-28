@@ -100,16 +100,25 @@ public class BookController {
     })
     @PostMapping("/users/orders")
     public OrderResponse orderBooks(HttpServletRequest req, @RequestBody OrderRequest orderRequest){
-        final User user = jwtTokenService.getUserInformation(req);
-        if (user == null) {
-            log.error("User not found");
-            throw new DataNotFoundException("User not found.", null);
-        }
-        final OrderResponse orderResponse = new OrderResponse();
-        if (orderRequest.getOrders().isEmpty()) {
-            return new OrderResponse();
-        } else {
-            return userOrderService.createNewOrderByUser(user, orderRequest);
+
+        try {
+            final User user = jwtTokenService.getUserInformation(req);
+            if (user == null) {
+                log.error("User not found");
+                throw new DataNotFoundException("User not found.", null);
+            }
+            if (orderRequest.getOrders().isEmpty()) {
+                return new OrderResponse();
+            } else {
+                return userOrderService.createNewOrderByUser(user, orderRequest);
+            }
+        } catch (ExpiredJwtException ex) {
+            log.error(ex.getMessage());
+            throw new AuthenticationException("Token expired.",
+                    ex.getMessage());
+        }  catch (Exception ex) {
+            log.error(ex.getMessage());
+            throw new UnexpectedException(ex.getMessage());
         }
     }
 }

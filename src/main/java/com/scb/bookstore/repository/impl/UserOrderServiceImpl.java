@@ -7,8 +7,6 @@ import com.scb.bookstore.model.request.OrderRequest;
 import com.scb.bookstore.model.response.OrderResponse;
 import com.scb.bookstore.model.user.User;
 import com.scb.bookstore.repository.ScbExternalBookRepository;
-import com.scb.bookstore.repository.impl.OrderServiceImpl;
-import com.scb.bookstore.repository.impl.UserServiceImpl;
 import com.scb.bookstore.repository.inf.UserOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,5 +58,11 @@ public class UserOrderServiceImpl implements UserOrder {
             orderService.save(order);
         }
         return orderResponse;
+    }
+
+    @Override
+    public void deleteUserAndOrder(User user) {
+        orderService.deleteByUserId(user.getId());
+        userService.deleteById(user.getId());
     }
 }
