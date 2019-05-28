@@ -69,6 +69,17 @@ I also provide the API docs via swagger, you can access to
 
 https://localhost:8443/swagger-ui.html#/
 
+And also provide the Actuator
+
+- https://localhost:8443/actuator/health
+- https://localhost:8443/actuator/info
+- https://localhost:8443/actuator/metrics
+
+/health – Shows application health information 
+/info – Displays arbitrary application info; not sensitive by default
+/metrics – Shows ‘metrics’ information for the current application
+
+
 
 When the application starting some dummy users are created you can access all APIs as below
 
