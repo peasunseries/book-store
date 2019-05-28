@@ -3,7 +3,27 @@
 This demo application is build by spring-boot and using in-memory DB(H2)  that provide the BookStore API that support
 https .
 
-##How to run the application?
+## Sequence Diagram
+
+
+<img src="images/login.png"/>
+
+
+<img src="images/getuser.png"/>
+
+
+<img src="images/newuser.png"/>
+
+
+<img src="images/deleteuser.png"/>
+
+
+<img src="images/listbook.png"/>
+
+
+<img src="images/orderbook.png"/>
+
+## How to run the application?
 
 Please checkout the project from https://github.com/peasunseries/book-store.git
 
@@ -52,7 +72,7 @@ https://localhost:8443/swagger-ui.html#/
 
 When the application starting some dummy users are created you can access all APIs as below
 
-###Login API
+### Login API
 
 ~~~
 curl --insecure -X POST \
@@ -75,7 +95,7 @@ response :
 
 The system will return you the token for using in the other secure API.
 
-###Get User
+### Get User
 Get the logged in user information
 
 ~~~
@@ -96,7 +116,7 @@ response :
 }
 ~~~
 
-##Create User
+## Create User
 Create new user
 
 ~~~
@@ -125,7 +145,7 @@ Response :
 }
 ~~~
 
-###Delete User
+## Delete User
 Delete logged in user and his order history
 
 ~~~
@@ -136,7 +156,7 @@ curl --insecure -X DELETE \
 
 Response : 200
 
-##GET Books
+## GET Books
 This API does not need the authorization it's return the list of books.
 
 ~~~
@@ -234,7 +254,7 @@ Response :
 ]
 ~~~
  
- ###Order books 
+ ## Order books 
  Order books for logged in user and store order information in DB
  
  ~~~
