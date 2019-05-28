@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserOrderServiceImpl implements UserOrder {
@@ -42,6 +44,7 @@ public class UserOrderServiceImpl implements UserOrder {
         OrderResponse orderResponse = new OrderResponse();
         final List<Book> bookList = scbExternalBookRepository.findAllBooking();
         List<Order> orders = new ArrayList<>();
+        String orderId = UUID.randomUUID().toString();
         for (int bookId : orderRequest.getOrders()) {
             Book book = bookList.stream()
                     .filter(b -> b.getId() == bookId)
@@ -52,6 +55,8 @@ public class UserOrderServiceImpl implements UserOrder {
             }
             orderResponse.setPrice(orderResponse.getPrice() + book.getPrice());
             Order order = new Order();
+            order.setOrderId(orderId);
+            order.setDateOfOrder(new Date());
             order.setBookId(bookId);
             order.setUserId(user.getId());
             orders.add(order);

@@ -1,5 +1,6 @@
 package com.scb.bookstore.model.order;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.scb.bookstore.model.user.User;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "orders")
@@ -22,11 +24,19 @@ public class Order {
     private int id;
 
     @Column
-    @JsonIgnore
+    @JsonProperty("order_id")
+    private String orderId;
+
+    @Column
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonProperty("date_of_order")
+    private Date dateOfOrder;
+
+    @Column
+    @JsonProperty("user_id")
     private int userId;
 
     @Column
     @JsonProperty("book_id")
-    @JsonIgnore
     private int bookId;
 }
