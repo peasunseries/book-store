@@ -11,5 +11,5 @@ import lombok.ToString;
 public class OrderResponse {
 
     @JsonProperty("price")
-    private Double price;
+    private Double price = 0.0;
 }

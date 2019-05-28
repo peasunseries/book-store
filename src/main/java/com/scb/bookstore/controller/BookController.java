@@ -6,11 +6,14 @@ import com.scb.bookstore.exception.DataNotFoundException;
 import com.scb.bookstore.exception.ExternalRequestException;
 import com.scb.bookstore.exception.UnexpectedException;
 import com.scb.bookstore.model.book.Book;
+import com.scb.bookstore.model.order.Order;
+import com.scb.bookstore.model.request.OrderRequest;
 import com.scb.bookstore.model.response.LoginResponse;
 import com.scb.bookstore.model.response.OrderResponse;
 import com.scb.bookstore.model.user.User;
 import com.scb.bookstore.repository.ScbExternalBookRepository;
 import com.scb.bookstore.repository.impl.OrderServiceImpl;
+import com.scb.bookstore.repository.impl.UserOrderServiceImpl;
 import com.scb.bookstore.repository.impl.UserServiceImpl;
 import com.scb.bookstore.security.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -38,6 +42,7 @@ public class BookController {
     private JwtTokenService jwtTokenService;
     private UserServiceImpl userService;
     private OrderServiceImpl orderService;
+    private UserOrderServiceImpl userOrderService;
 
     @Autowired
     public void setJwtTokenService(JwtTokenService jwtTokenService) {
@@ -57,6 +62,11 @@ public class BookController {
     @Autowired
     public void setScbExternalBookRepository(ScbExternalBookRepository scbExternalBookRepository) {
         this.scbExternalBookRepository = scbExternalBookRepository;
+    }
+
+    @Autowired
+    public void setUserOrderService(UserOrderServiceImpl userOrderService) {
+        this.userOrderService = userOrderService;
     }
 
     @ApiOperation(value = "Get all books.", response = Book.class)
@@ -84,19 +94,22 @@ public class BookController {
     @ApiOperation(value = "Order books.", response = OrderResponse.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful"),
+            @ApiResponse(code = 204, message = "Data not found."),
             @ApiResponse(code = 401, message = "Authentication failed."),
             @ApiResponse(code = 500, message = "Unexpected exception.")
     })
     @PostMapping("/users/orders")
-    public User orderBooks(HttpServletRequest req, @RequestBody OrderResponse orderBooks){
+    public OrderResponse orderBooks(HttpServletRequest req, @RequestBody OrderRequest orderRequest){
         final User user = jwtTokenService.getUserInformation(req);
         if (user == null) {
             log.error("User not found");
             throw new DataNotFoundException("User not found.", null);
         }
-        OrderResponse orderResponse = new OrderResponse();
-        orderResponse.setPrice(750.0);
-        return user;
+        final OrderResponse orderResponse = new OrderResponse();
+        if (orderRequest.getOrders().isEmpty()) {
+            return new OrderResponse();
+        } else {
+            return userOrderService.createNewOrderByUser(user, orderRequest);
+        }
     }
-
 }
