@@ -26,6 +26,6 @@ INSERT INTO USERS (id, first_name, last_name, username, password, date_of_birth)
 INSERT INTO USERS (id, first_name, last_name, username, password, date_of_birth)  VALUES (2, 'Jirapa', 'Kantawong', 'jirapa', '$2a$10$D02XjIOKVZOFV5kL6aezXubWwkseex9uQZAiYLUFcUCZ3CPfiGS32', '1978-01-16');
 INSERT INTO USERS (id, first_name, last_name, username, password, date_of_birth)  VALUES (3, 'Sura', 'Jiranan', 'sura', '$2a$10$D02XjIOKVZOFV5kL6aezXubWwkseex9uQZAiYLUFcUCZ3CPfiGS32', '1978-01-16');
 
-INSERT INTO ORDERS (id, order_id, user_id, book_id, date_of_order) VALUES (1, 'a', 1, 1, '1978-01-16');
-INSERT INTO ORDERS (id, order_id, user_id, book_id, date_of_order) VALUES (2, 'a', 1, 2, '1978-01-16');
-INSERT INTO ORDERS (id, order_id, user_id, book_id, date_of_order) VALUES (3, 'a', 1, 3, '1978-01-16');
+INSERT INTO ORDERS (id, order_id, user_id, book_id, date_of_order) VALUES (1, '9ffffd46-078f-4ea4-b021-4875dff58c11', 1, 1, '1978-01-16');
+INSERT INTO ORDERS (id, order_id, user_id, book_id, date_of_order) VALUES (2, '9ffffd46-078f-4ea4-b021-4875dff58c11', 1, 2, '1978-01-16');
+INSERT INTO ORDERS (id, order_id, user_id, book_id, date_of_order) VALUES (3, '9ffffd46-078f-4ea4-b021-4875dff58c11', 1, 3, '1978-01-16');
