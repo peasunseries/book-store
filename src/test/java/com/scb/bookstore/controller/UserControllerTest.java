@@ -131,7 +131,7 @@ public class UserControllerTest {
 
     @Test
     public void step5_deleteUserTest() throws Exception {
-        authenticationRequest.setUsername("chiwa");
+        authenticationRequest.setUsername("sura");
         authenticationRequest.setPassword("password");
 
         MvcResult result = mockMvc.perform(post("/login")
@@ -154,7 +154,7 @@ public class UserControllerTest {
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authenticationRequest)))
-                .andExpect(content().string(containsString("User chiwa not found.")))
+                .andExpect(content().string(containsString("User sura not found.")))
                 .andExpect(status().isUnauthorized());
     }
 
