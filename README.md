@@ -23,6 +23,10 @@ https .
 ### Order book
 <img src="images/orderbook.png"/>
 
+### Setting up Lombok with Eclipse and Intellij
+
+- https://www.baeldung.com/lombok-ide
+
 ## How to run the application?
 
 Please checkout the project from https://github.com/peasunseries/book-store.git
@@ -35,11 +39,8 @@ mvn spring-boot:run
 
 ~~~
 
-** If mvn clean install , The Unit Test Failed in case of Lombok
 
-- https://www.baeldung.com/lombok-ide
-
-or just ignore test
+** If mvn clean install , The Unit Test Failed pleas ignore test
 
 ~~~
  mvn clean install -DskipTests
