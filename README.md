@@ -35,7 +35,11 @@ mvn spring-boot:run
 
 ~~~
 
-** If mvn clean install , The Unit Test Failed in some case please do the
+** If mvn clean install , The Unit Test Failed in case of Lombok
+
+- https://www.baeldung.com/lombok-ide
+
+or just ignore test
 
 ~~~
  mvn clean install -DskipTests
