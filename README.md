@@ -34,6 +34,12 @@ mvn clean install
 mvn spring-boot:run
 
 ~~~
+
+** If mvn clean install , The Unit Test Failed in some case please do the
+
+~~~
+ mvn clean install -DskipTests
+~~~
  
 The application should be start and you will see some log as below.
 
