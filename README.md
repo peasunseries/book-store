@@ -75,9 +75,11 @@ And also provide the Actuator
 - https://localhost:8443/actuator/info
 - https://localhost:8443/actuator/metrics
 
-/health – Shows application health information 
-/info – Displays arbitrary application info; not sensitive by default
-/metrics – Shows ‘metrics’ information for the current application
+ /health – Shows application health information 
+ 
+ /info – Displays arbitrary application info; not sensitive by default
+ 
+ /metrics – Shows ‘metrics’ information for the current application
 
 
 
