@@ -66,8 +66,7 @@ INFO] Nothing to compile - all classes are up to date
 
 I also provide the API docs via swagger, you can access to 
 
-
-https://localhost:8443/swagger-ui.html#/
+- https://localhost:8443/swagger-ui.html#/
 
 And also provide the Actuator
 
